@@ -10,10 +10,10 @@ ENV AGENT_VERSION=${AGENT_VERSION} \
 
 # Единый RUN – все операции в одном слое
 RUN set -eux; \
-    # 1. Обновление и установка минимально необходимых пакетов
-    dnf update -y; \
-    dnf install -y epel-release; \
-    dnf install -y --setopt=install_weak_deps=False --setopt=tsflags=nodocs \
+    # 1. Обновление и установка минимального набора пакетов
+    microdnf update -y; \
+    microdnf install -y epel-release; \
+    microdnf install -y --nodocs \
         wget \
         perl \
         rpm \
@@ -29,8 +29,8 @@ RUN set -eux; \
         glibc-langpack-en \
         python3 \
     ; \
-    dnf clean all; \
-    rm -rf /var/cache/dnf; \
+    microdnf clean all; \
+    rm -rf /var/cache/dnf /var/cache/yum; \
     \
     # 2. Загрузка и установка агента
     wget -q -O /opt/CyberProtect_Agent.bin \
@@ -40,11 +40,11 @@ RUN set -eux; \
     rm -f /opt/CyberProtect_Agent.bin; \
     \
     # 3. Удаление пакетов, нужных только для установки
-    dnf remove -y wget cpio tar dkms; \
-    dnf clean all; \
-    rm -rf /var/cache/dnf; \
+    microdnf remove -y wget cpio tar dkms; \
+    microdnf clean all; \
+    rm -rf /var/cache/dnf /var/cache/yum; \
     \
-    # 4. Очистка временных файлов агента (пересоздаются при первом запуске)
+    # 4. Очистка временных файлов агента (они пересоздадутся при первом запуске)
     rm -rf /opt/acronis/var/aakore/*.db* \
            /opt/acronis/var/siem-connector/*.db* \
            /etc/Acronis/aakore.reg \
@@ -57,10 +57,9 @@ RUN set -eux; \
     cp -rp /var/lib/Acronis /opt/acronis_template/var; \
     cp -rp /opt/acronis/var /opt/acronis_template/opt_var; \
     \
-    # 6. Удаление оригинальных каталогов – они будут восстановлены из шаблона при первом старте
+    # 6. Удаление оригинальных каталогов – они будут восстановлены из шаблона при старте
     rm -rf /etc/Acronis /var/lib/Acronis /opt/acronis/var
 
-# Копирование точки входа
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
