@@ -1,4 +1,4 @@
-FROM rockylinux:9
+FROM rockylinux:9-minimal
 
 ARG AGENT_VERSION
 ARG MIRROR_URL
