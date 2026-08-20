@@ -33,9 +33,19 @@ RUN set -eux; \
     wget -q -O /opt/CyberProtect_Agent.bin \
         "${MIRROR_URL}/download/u/baas/4.0/${AGENT_VERSION}/CyberProtect_AgentForLinux_x86_64.bin"; \
     chmod +x /opt/CyberProtect_Agent.bin; \
+    # Fix for Debian Trixie: disable RPM unshare plugin which fails in unprivileged docker builds
+    mv /usr/bin/rpm /usr/bin/rpm.orig; \
+    echo '#!/bin/bash' > /usr/bin/rpm; \
+    echo 'exec /usr/bin/rpm.orig --noplugins "$@"' >> /usr/bin/rpm; \
+    chmod +x /usr/bin/rpm; \
     # Install Acronis Agent
     yes | /opt/CyberProtect_Agent.bin -a --skip-prereq-check --skip-registration --skip-svc-start --id="BackupAndRecoveryAgent"; \
     rm -f /opt/CyberProtect_Agent.bin; \
+    # Restore RPM
+    mv /usr/bin/rpm.orig /usr/bin/rpm; \
+    # Optimize: Remove kernel modules, bootable media, and active protection to save space/resources
+    rpm -e --nodeps dkms snapapi26_modules file_protector BackupAndRecoveryBootableComponents || true; \
+    rm -f /etc/init.d/acronis_active_protection /etc/init.d/acronis_schedule; \
     # Clean temporary Acronis files
     rm -rf /opt/acronis/var/aakore/*.db* \
            /opt/acronis/var/siem-connector/*.db* \

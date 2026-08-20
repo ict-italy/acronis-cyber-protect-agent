@@ -51,13 +51,6 @@ else
     fi
 fi
 
-    # Отключаем Active Protection превентивно
-	# Disable Active Protection as a precaution
-if [ -f /etc/init.d/acronis_active_protection ]; then
-    /etc/init.d/acronis_active_protection stop 2>/dev/null
-    chmod -x /etc/init.d/acronis_active_protection
-fi
-
     # Запускаем основные службы Акрониса
 	# Launch the main Acronis services
 echo "Starting Acronis daemons..."
@@ -73,13 +66,10 @@ else
     echo "ERROR: aakore binary not found! SIEM connector will not work."
 fi
 
-    # Запускаем остальные legacy службы, у которых есть init.d скрипты
-	# Start the remaining legacy services that have init.d scripts
-for service in acronis_mms acronis_schedule; do
-    if [ -f /etc/init.d/$service ]; then
-        /etc/init.d/$service start
-    fi
-done
+    # Запускаем MMS (необходим для связи с консолью)
+if [ -f /etc/init.d/acronis_mms ]; then
+    /etc/init.d/acronis_mms start
+fi
 
 echo "Waiting 10 seconds for services to stabilize..."
 sleep 10
