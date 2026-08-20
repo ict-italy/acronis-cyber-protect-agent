@@ -1,4 +1,4 @@
-FROM debian:stable-slim
+FROM debian:trixie-slim
 
 ARG AGENT_VERSION
 ARG MIRROR_URL
