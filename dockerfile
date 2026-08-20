@@ -21,7 +21,7 @@ RUN set -eux; \
         procps \
         psmisc \
         openssl \
-        cron \
+        dcron \
         cpio \
         tar \
         python3 \
