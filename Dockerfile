@@ -1,4 +1,4 @@
-FROM debian:trixie-slim
+FROM debian:bookworm-slim
 
 ARG AGENT_VERSION
 ARG MIRROR_URL
