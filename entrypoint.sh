@@ -55,6 +55,10 @@ fi
 	# Launch the main Acronis services
 echo "Starting Acronis daemons..."
 
+    # Оптимизация памяти для aakore (написан на Go)
+    export GOGC=30
+    export GOMEMLIMIT=60MiB
+
     # Запуск основного движка микрослужб (aakore) напрямую в фоне
 	# Launch the main microservices engine (aakore) directly in the background
 if [ -f /etc/init.d/aakore ]; then
@@ -67,9 +71,9 @@ else
 fi
 
     # Запускаем MMS (необходим для связи с консолью)
-if [ -f /etc/init.d/acronis_mms ]; then
-    /etc/init.d/acronis_mms start
-fi
+#if [ -f /etc/init.d/acronis_mms ]; then
+#    /etc/init.d/acronis_mms start
+#fi
 
 echo "Waiting 10 seconds for services to stabilize..."
 sleep 10
