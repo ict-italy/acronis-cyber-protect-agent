@@ -44,7 +44,7 @@ RUN set -eux; \
         "${MIRROR_URL}/download/u/baas/4.0/${AGENT_VERSION}/CyberProtect_AgentForLinux_x86_64.bin"; \
     chmod +x /opt/CyberProtect_Agent.bin; \
     # Install Acronis Agent
-    /opt/CyberProtect_Agent.bin -a --skip-prereq-check --skip-registration --id="BackupAndRecoveryAgent"; \
+    /opt/CyberProtect_Agent.bin -a --skip-prereq-check --skip-registration --skip-svc-start --id="BackupAndRecoveryAgent"; \
     rm -f /opt/CyberProtect_Agent.bin; \
     # Очистка временных файлов агента (пересоздаются при первом запуске)
     rm -rf /opt/acronis/var/aakore/*.db* \
