@@ -1,4 +1,4 @@
-FROM debian:bookworm-slim
+FROM debian:stable-slim
 
 ARG AGENT_VERSION
 ARG MIRROR_URL
