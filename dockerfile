@@ -36,6 +36,9 @@ RUN set -eux; \
         glibc-${GLIBC_VERSION}.apk \
         glibc-bin-${GLIBC_VERSION}.apk \
         glibc-i18n-${GLIBC_VERSION}.apk; \
+    # Restore the glibc loader symlink that gets overwritten by Alpine's gcompat
+    rm -f /lib/ld-linux-x86-64.so.2; \
+    ln -s /usr/glibc-compat/lib/ld-linux-x86-64.so.2 /lib/ld-linux-x86-64.so.2; \
     /usr/glibc-compat/bin/localedef -i en_US -f UTF-8 en_US.UTF-8; \
     rm glibc-*.apk; \
     # Needed for Acronis legacy services scripts
@@ -43,8 +46,8 @@ RUN set -eux; \
     wget -q -O /opt/CyberProtect_Agent.bin \
         "${MIRROR_URL}/download/u/baas/4.0/${AGENT_VERSION}/CyberProtect_AgentForLinux_x86_64.bin"; \
     chmod +x /opt/CyberProtect_Agent.bin; \
-    # Install Acronis Agent
-    /opt/CyberProtect_Agent.bin -a --skip-prereq-check --skip-registration --skip-svc-start --id="BackupAndRecoveryAgent"; \
+    # Install Acronis Agent (pipe 'yes' in case of OS warnings)
+    yes | /opt/CyberProtect_Agent.bin -a --skip-prereq-check --skip-registration --skip-svc-start --id="BackupAndRecoveryAgent"; \
     rm -f /opt/CyberProtect_Agent.bin; \
     # Очистка временных файлов агента (пересоздаются при первом запуске)
     rm -rf /opt/acronis/var/aakore/*.db* \
