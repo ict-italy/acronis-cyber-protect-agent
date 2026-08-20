@@ -1,0 +1,35 @@
+FROM alpine:latest
+
+# Install basic packages and glibc required for proprietary binaries
+RUN apk update && apk add --no-cache \
+    bash wget perl rpm pciutils procps psmisc openssl \
+    cron cpio tar python3 ca-certificates curl
+
+# Install sgerrand glibc for running standard x86_64 linux binaries
+ENV GLIBC_REPO=https://github.com/sgerrand/alpine-pkg-glibc
+ENV GLIBC_VERSION=2.35-r1
+
+RUN wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub && \
+    wget ${GLIBC_REPO}/releases/download/${GLIBC_VERSION}/glibc-${GLIBC_VERSION}.apk && \
+    wget ${GLIBC_REPO}/releases/download/${GLIBC_VERSION}/glibc-bin-${GLIBC_VERSION}.apk && \
+    wget ${GLIBC_REPO}/releases/download/${GLIBC_VERSION}/glibc-i18n-${GLIBC_VERSION}.apk && \
+    apk add --no-cache --force-overwrite \
+        glibc-${GLIBC_VERSION}.apk \
+        glibc-bin-${GLIBC_VERSION}.apk \
+        glibc-i18n-${GLIBC_VERSION}.apk && \
+    rm glibc-*.apk
+
+ARG AGENT_VERSION=38871
+ARG MIRROR_URL=https://dl.managed-protection.com
+
+ENV LANG=en_US.UTF-8 \
+    LC_ALL=en_US.UTF-8
+
+# Need /etc/init.d for standard scripts
+RUN mkdir -p /etc/init.d
+
+RUN wget -q -O /opt/CyberProtect_Agent.bin \
+    "${MIRROR_URL}/download/u/baas/4.0/${AGENT_VERSION}/CyberProtect_AgentForLinux_x86_64.bin" && \
+    chmod +x /opt/CyberProtect_Agent.bin
+
+RUN /opt/CyberProtect_Agent.bin -a --skip-prereq-check --skip-registration --id="BackupAndRecoveryAgent"
