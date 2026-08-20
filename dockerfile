@@ -24,7 +24,6 @@ RUN set -eux; \
         dcron \
         cpio \
         tar \
-        python3 \
         ca-certificates \
         curl; \
     # Install sgerrand glibc to allow proprietary binaries to run on Alpine
