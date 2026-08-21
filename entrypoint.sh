@@ -66,9 +66,9 @@ else
 fi
 
     # Запускаем MMS (необходим для связи с консолью)
-#if [ -f /etc/init.d/acronis_mms ]; then
-#    /etc/init.d/acronis_mms start
-#fi
+if [ -f /etc/init.d/acronis_mms ]; then
+    /etc/init.d/acronis_mms start
+fi
 
 echo "Waiting 10 seconds for services to stabilize..."
 sleep 10
