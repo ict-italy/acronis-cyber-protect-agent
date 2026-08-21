@@ -32,13 +32,8 @@ if [ ! -f "$CONFIG_FILE" ]; then
     rm -rf /opt/acronis/var/siem-connector/*.db*
     rm -f /etc/Acronis/aakore.reg
 
-    # 4. Генерируем уникальные ID для MMS агента
-	# 4. Generate unique IDs for the MMS agent
-    NEW_MMS_ID=$(cat /proc/sys/kernel/random/uuid | tr 'a-f' 'A-F')
-    NEW_INSTANCE_ID=$(cat /proc/sys/kernel/random/uuid | tr 'a-f' 'A-F')
-
-    echo "Applying unique IDs using native Acronis tool..."
-    acropsh /usr/lib/Acronis/PyShell/site-tools/change_machine_id.py -m "$NEW_MMS_ID" -i "$NEW_INSTANCE_ID"
+    # 4. Уникальные ID теперь генерируются автоматически самими службами при первом запуске,
+    # так как мы используем --skip-svc-start при сборке и не запекаем "грязные" ID в образ.
 
 else
     echo "Persistent volume found. Keeping existing Acronis IDs."
